@@ -1,0 +1,49 @@
+{
+  "format": "chrome-tab-vault",
+  "version": "1.7.3",
+  "exportedAt": "2026-10-09T00:00:00.000Z",
+  "source": {
+    "incognito": true,
+    "scope": "all-windows"
+  },
+  "windows": [
+    {
+      "state": "normal",
+      "focused": true,
+      "groups": {
+        "g1": {
+          "title": "Chrome research",
+          "color": "blue",
+          "collapsed": true
+        }
+      },
+      "tabs": [
+        {
+          "url": "https://example.org/pinned",
+          "pinned": true
+        },
+        {
+          "url": "https://example.org/active",
+          "active": true,
+          "muted": true,
+          "groupKey": "g1"
+        },
+        {
+          "url": "https://example.org/sleep",
+          "discarded": true,
+          "groupKey": "g1"
+        }
+      ]
+    },
+    {
+      "state": "maximized",
+      "focused": false,
+      "tabs": [
+        {
+          "url": "https://example.com/other"
+        }
+      ],
+      "groups": {}
+    }
+  ]
+}

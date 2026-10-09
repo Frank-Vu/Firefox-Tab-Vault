@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Firefox Tab Vault",
+  "version": "1.0.0",
+  "description": "Export and restore Firefox tabs locally, including tab groups, order, pinned state, and window layout.",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "downloads"
+  ],
+  "incognito": "spanning",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "firefox-tab-vault@frank-vu",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": { "required": ["none"] }
+    }
+  },
+  "background": {
+    "scripts": ["core.js", "firefox.js", "background.js"]
+  },
+  "action": {
+    "default_title": "Firefox Tab Vault",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
