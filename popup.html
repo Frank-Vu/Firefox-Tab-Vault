@@ -18,7 +18,7 @@
       <span id="contextBadge" class="badge">Checking…</span>
     </header>
 
-    <section class="card">
+    <section id="exportSection" class="card">
       <h2>Export</h2>
       <label class="field-label" for="exportScope">Tabs to include</label>
       <select id="exportScope">
@@ -48,8 +48,8 @@
         <option value="current">Append to current window</option>
       </select>
       <input id="fileInput" type="file" accept=".json,.txt,application/json,text/plain" hidden>
-      <button id="chooseFile" class="primary full" type="button">Choose backup and restore</button>
-      <p class="hint">Nothing is uploaded. Restoring into the current window never closes existing tabs.</p>
+      <button id="chooseFile" class="primary full" type="button">Import backup…</button>
+      <p id="importHint" class="hint">Opens an import tab for file selection and review. Nothing is uploaded.</p>
     </section>
 
     <div id="status" class="status" role="status" aria-live="polite"></div>

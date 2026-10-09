@@ -4,6 +4,8 @@ const { createServer } = require('node:http');
 const { readFileSync } = require('node:fs');
 const archive = JSON.parse(readFileSync('tests/fixtures/chrome.json', 'utf8'));
 archive.source.incognito = false;
+archive.source.browser = 'Firefox';
+archive.windows[0].groups.g1.title = 'Firefox research';
 const files = new Set(['popup.html', 'popup.css', 'popup.js', 'core.js', 'crypto.js']);
 const server = createServer((request, response) => {
   const name = new URL(request.url, 'http://localhost').pathname.slice(1) || 'popup.html';
@@ -11,11 +13,17 @@ const server = createServer((request, response) => {
     response.setHeader('Content-Type', 'text/javascript');
     response.end(`window.browser = {
       windows: { getCurrent: async () => ({id: 1, incognito: false}) },
-      runtime: { sendMessage: async (message) => ({value:
+      runtime: { sendMessage: async (message) => {
+        if (message.type === 'open-import') {
+          window.open('popup.html?view=import&target=' + message.target, '_blank');
+          return {value: {tabId: 1}};
+        }
+        return {value:
         message.type === 'result' ? {pending: false, result: null} :
         message.type === 'collect' ? ${JSON.stringify(archive)} :
         message.type === 'restore' ? {created: 4, groups: 1, failed: 0, warnings: 0} : 1
-      }) }
+        };
+      } }
     };`);
   } else if (files.has(name)) {
     let content = readFileSync(name, 'utf8');

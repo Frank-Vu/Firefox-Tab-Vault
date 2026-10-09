@@ -36,7 +36,7 @@
             url: tab.pendingUrl || tab.url || 'about:blank', title: tab.title || '',
             pinned: tab.pinned, active: tab.active, muted: Boolean(tab.mutedInfo?.muted),
             discarded: tab.discarded, groupKey: keys.get(tab.groupId) || null,
-            // Firefox has no autoDiscardable property. Keep the backup field for Chrome readers.
+            // Firefox has no autoDiscardable property. Keep the field for legacy readers.
             autoDiscardable: true
           }))
         });

@@ -42,6 +42,11 @@ body {
   font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+body.import-page {
+  width: min(100%, 540px);
+  margin: 24px auto;
+}
+
 main {
   padding: 14px;
 }

@@ -7,8 +7,8 @@
   const passed = [];
   const failures = [];
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
-  const wait = async (check) => {
-    for (let n = 0; n < 300; n += 1) {
+  const wait = async (check, attempts = 300) => {
+    for (let n = 0; n < attempts; n += 1) {
       if (await check()) return;
       await new Promise((resolve) => setTimeout(resolve, 30));
     }
@@ -111,6 +111,49 @@
     await wait(() => !elements.exportTxt.disabled);
     assert(elements.status.textContent.startsWith('Exported 1 tab from 1 window.'), elements.status.textContent);
   });
+  for (const target of ['current', 'new']) {
+    await run(`${target}: popup hands import to a persistent tab`, async () => {
+      elements.importTarget.value = target;
+      const before = new Set((await browser.tabs.query({ windowId: sourceWindowId })).map((tab) => tab.id));
+      let pickerOpened = false;
+      const originalClick = elements.fileInput.click;
+      elements.fileInput.click = () => { pickerOpened = true; };
+      let importTab;
+      try {
+        elements.chooseFile.click();
+        await wait(async () => {
+          importTab = (await browser.tabs.query({ windowId: sourceWindowId })).find((tab) =>
+            !before.has(tab.id) && tab.url?.includes('view=import'));
+          return importTab;
+        });
+        assert(!pickerOpened, 'File picker opened in the toolbar popup');
+        assert(importTab.incognito === (mode === 'private'), 'Import tab changed browsing mode');
+        assert(new URL(importTab.url).searchParams.get('target') === target, 'Destination was lost');
+        let done;
+        const completed = new Promise((resolve) => { done = resolve; });
+        const listener = (message) => {
+          if (message?.channel === 'test-import' && message.mode === mode && message.target === target) {
+            done(message);
+            return Promise.resolve({});
+          }
+        };
+        browser.runtime.onMessage.addListener(listener);
+        try {
+          await browser.tabs.update(importTab.id, { url: `${importTab.url}&test-import=${mode}` });
+          let report;
+          void completed.then((value) => { report = value; });
+          await wait(() => report, 1000);
+          passed.push(...report.passed);
+          failures.push(...report.failures);
+        } finally {
+          browser.runtime.onMessage.removeListener(listener);
+        }
+      } finally {
+        elements.fileInput.click = originalClick;
+        if (importTab) await browser.tabs.remove(importTab.id);
+      }
+    });
+  }
   await browser.runtime.sendMessage({ channel: 'test-ui', type: 'closing', mode });
   void callBackground({ type: 'restore', target: 'new', archive: {
     windows: [{ tabs: Array.from({ length: 15 }, (_, index) => ({

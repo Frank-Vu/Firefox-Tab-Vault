@@ -52,6 +52,8 @@ let contextIsIncognito = false;
 let sourceWindowId = null;
 let passwordRequest = null;
 let reviewRequest = null;
+const pageOptions = new URLSearchParams(location.search);
+const isImportPage = pageOptions.get('view') === 'import';
 
 void initialize();
 
@@ -64,6 +66,15 @@ async function initialize() {
     elements.encryptExport.checked = contextIsIncognito;
     elements.contextBadge.textContent = contextIsIncognito ? `Private · v${VERSION}` : `Normal · v${VERSION}`;
     elements.contextBadge.classList.toggle('incognito', contextIsIncognito);
+    if (isImportPage) {
+      document.body.classList.add('import-page');
+      document.getElementById('exportSection').hidden = true;
+      document.title = 'Import backup · Firefox Tab Vault';
+      elements.importTarget.value = pageOptions.get('target') === 'current' ? 'current' : 'new';
+      elements.chooseFile.textContent = 'Choose backup and restore';
+      document.getElementById('importHint').textContent =
+        'Choose a backup, enter its password if encrypted, then review and confirm. Keep this tab open until you confirm.';
+    }
     const previous = await callBackground({ type: 'result' });
     if (previous.pending) showStatus('A restore is still running in the background.');
     else if (previous.result) showRestoreResult(previous.result);
@@ -74,7 +85,10 @@ async function initialize() {
 
   elements.exportJson.addEventListener('click', () => void exportBackup('json'));
   elements.exportTxt.addEventListener('click', () => void exportBackup('txt'));
-  elements.chooseFile.addEventListener('click', () => elements.fileInput.click());
+  elements.chooseFile.addEventListener('click', () => {
+    if (isImportPage) elements.fileInput.click();
+    else void openImportPage();
+  });
   elements.fileInput.addEventListener('change', () => void importSelectedFile());
   elements.passwordForm.addEventListener('submit', handlePasswordSubmit);
   elements.passwordCancel.addEventListener('click', () => finishPasswordRequest(null));
@@ -97,6 +111,19 @@ async function initialize() {
     event.preventDefault();
     finishArchiveReview(false);
   });
+}
+
+async function openImportPage() {
+  clearStatus();
+  setBusy(true);
+  try {
+    // The background owns this handoff because opening a tab closes the action popup.
+    await callBackground({ type: 'open-import', target: elements.importTarget.value });
+  } catch (error) {
+    showStatus(`Could not open import: ${error.message}`, 'error');
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function callBackground(message) {

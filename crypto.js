@@ -1,7 +1,9 @@
 (function attachTabVaultCrypto(globalObject) {
   'use strict';
 
-  const ENCRYPTED_FORMAT = 'chrome-tab-vault-encrypted';
+  const ENCRYPTED_FORMAT = 'firefox-tab-vault-encrypted';
+  const LEGACY_ENCRYPTED_FORMAT = 'chrome-tab-vault-encrypted';
+  const SUPPORTED_ENCRYPTED_FORMATS = new Set([ENCRYPTED_FORMAT, LEGACY_ENCRYPTED_FORMAT]);
   const ENCRYPTION_VERSION = 1;
   const ENCRYPTION_ALGORITHM = 'AES-GCM';
   const ENCRYPTION_KEY_LENGTH = 256;
@@ -14,7 +16,8 @@
   const SALT_LENGTH = 16;
   const IV_LENGTH = 12;
   const MIN_PASSWORD_LENGTH = 8;
-  const ENCRYPTED_TXT_HEADER = '# Chrome Tab Vault Encrypted TXT v1';
+  const ENCRYPTED_TXT_HEADER = '# Firefox Tab Vault Encrypted TXT v1';
+  const LEGACY_ENCRYPTED_TXT_HEADER = '# Chrome Tab Vault Encrypted TXT v1';
 
   function isObject(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -116,7 +119,7 @@
   }
 
   function normalizeEncryptedEnvelope(input) {
-    if (!isObject(input) || input.format !== ENCRYPTED_FORMAT) {
+    if (!isObject(input) || !SUPPORTED_ENCRYPTED_FORMATS.has(input.format)) {
       throw new Error('The file is not a Tab Vault encrypted backup.');
     }
     if (input.version !== ENCRYPTION_VERSION) {
@@ -157,7 +160,8 @@
     }
 
     return {
-      format: ENCRYPTED_FORMAT,
+      // Preserve the original identifier: AES-GCM authenticates this metadata.
+      format: input.format,
       version: ENCRYPTION_VERSION,
       payloadFormat: validatePayloadFormat(input.payloadFormat),
       encryption: {
@@ -331,7 +335,8 @@
     }
 
     const trimmed = text.trim();
-    const hasTxtHeader = trimmed.startsWith(ENCRYPTED_TXT_HEADER);
+    const hasTxtHeader = [ENCRYPTED_TXT_HEADER, LEGACY_ENCRYPTED_TXT_HEADER]
+      .some((header) => trimmed.startsWith(header));
     let jsonText = trimmed;
     if (hasTxtHeader) {
       const jsonStart = trimmed.indexOf('{');
@@ -347,13 +352,13 @@
     try {
       candidate = JSON.parse(jsonText);
     } catch (error) {
-      if (hasTxtHeader || /"format"\s*:\s*"chrome-tab-vault-encrypted"/.test(jsonText)) {
+      if (hasTxtHeader || /"format"\s*:\s*"(?:firefox|chrome)-tab-vault-encrypted"/.test(jsonText)) {
         throw new Error('The encrypted backup envelope is invalid or incomplete.');
       }
       return null;
     }
 
-    if (!isObject(candidate) || candidate.format !== ENCRYPTED_FORMAT) {
+    if (!isObject(candidate) || !SUPPORTED_ENCRYPTED_FORMATS.has(candidate.format)) {
       if (hasTxtHeader) {
         throw new Error('The encrypted TXT backup has an invalid envelope.');
       }

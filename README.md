@@ -1,7 +1,7 @@
 # Firefox Tab Vault
 
-A local-only Firefox desktop extension port of
-[Chrome Tab Vault](https://github.com/Frank-Vu/Chrome-Tab-Vault). Requires **Firefox 142 or newer**.
+A local-only Firefox desktop extension for tab backups. Requires **Firefox 142 or newer**.
+See [upstream attribution](UPSTREAM.md) for the original project.
 
 ## Features
 
@@ -15,14 +15,14 @@ A local-only Firefox desktop extension port of
 - Preserve native Firefox tab groups, including names, colors, and collapsed state.
 - Restore separate windows, their size and position, state, and preferred focus, or append
   all archived windows into the current window without closing existing tabs.
-- Read existing Chrome Tab Vault JSON/TXT backups, including password-encrypted backups.
+- Read legacy Tab Vault JSON/TXT backups, including password-encrypted backups.
 - Explicitly isolate normal and private windows and associate downloads with their originating mode.
 - Complete confirmed restores and downloads in a background script even if the popup closes.
 - No account, analytics, remote code, network requests, or persistent storage of backup contents or passwords.
 
 ## Install for local use
 
-1. Extract `dist/firefox-tab-vault-1.0.0.zip`, or use this source directory.
+1. Extract `dist/firefox-tab-vault-1.0.1.zip`, or use this source directory.
 2. In Firefox, open `about:debugging#/runtime/this-firefox`.
 3. Click **Load Temporary Add-on…** and select `manifest.json` in the extracted directory.
 4. Use the Firefox Tab Vault toolbar button. Pin it through Firefox's extensions menu if desired.
@@ -37,7 +37,7 @@ or self-distribution. No signing credentials are included or required for local 
 Open `about:addons`, select Firefox Tab Vault, and set **Run in Private Windows** to **Allow**.
 Open the extension from the private window to export or restore privately.
 
-Firefox uses a shared extension context instead of Chrome's split-incognito mode. This port
+Firefox uses a shared extension context for normal and private browsing. This extension
 captures the originating window ID and filters all-window exports by its `incognito` flag.
 Restore destinations always use the mode of the window where you opened the extension,
 regardless of the backup's source mode. Importing a private backup into normal browsing
@@ -49,25 +49,31 @@ Choose **Current window** or **All windows in this mode**, optionally change the
 checkbox, then choose **Export JSON** or **Export TXT**. Review the tabs, select what to include,
 and confirm. Encrypted exports require a password of at least eight characters and confirmation.
 
-To restore, select **New window(s)** or **Append to current window**, then choose a backup.
-Enter its password if encrypted, review the full list, and confirm. Cancellation opens no tabs.
+To restore, select **New window(s)** or **Append to current window**, then click **Import backup…**.
+An import tab opens in that window and browsing mode. Click **Choose backup and restore** there,
+enter its password if encrypted, review the full list, and confirm. Keep the import tab open
+until you confirm. Cancelling the review opens no restored tabs.
+File selection runs in this tab because Firefox can close toolbar popups when a native file
+chooser takes focus, losing the selection before it can be read.
 If the popup closes during restoration, reopen it in the originating window to see the result.
 
 Encryption uses local Web Crypto: AES-256-GCM with an authenticated envelope and
 PBKDF2-SHA-256 with 600,000 iterations, a random 16-byte salt, and a random 12-byte IV.
 Passwords are never saved. Lost passwords cannot be recovered.
 
-The original `chrome-tab-vault` format identifiers and TXT headers are retained for
-interoperability; a Chrome name inside a backup does not mean the Firefox port used Chrome.
+New backups use the `firefox-tab-vault` and `firefox-tab-vault-encrypted` identifiers,
+with Firefox Tab Vault TXT headers. Legacy identifiers and headers are accepted on import,
+including in previously encrypted backups. New exports require Firefox Tab Vault 1.0.1 or
+another reader that supports the Firefox identifiers.
 
 ## Firefox compatibility and limits
 
 - Firefox restricts privileged URLs, including `about:config`, other extensions' pages,
-  JavaScript URLs, and Chrome settings pages. Failures are counted while remaining tabs restore.
-  Chrome's New Tab URL and `about:newtab` are translated to Firefox's supported new-tab operation.
+  JavaScript URLs, and other browsers' settings pages. Failures are counted while remaining tabs restore.
+  Legacy New Tab URLs and `about:newtab` are translated to Firefox's supported new-tab operation.
 - Firefox exposes discarded state and can create sleeping tabs without loading their contents.
   Activating a sleeping tab loads it, as expected.
-- Firefox does not expose Chrome's per-tab `autoDiscardable` setting. That backup field is
+- Firefox does not expose the legacy per-tab `autoDiscardable` setting. That backup field is
   accepted for compatibility, but Firefox manages automatic unloading itself.
 - Pinned tabs occupy Firefox's pinned section. When appending, restored pins follow existing
   pins; restored unpinned tabs follow existing unpinned tabs. Existing groups are preserved.

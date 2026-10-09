@@ -1,9 +1,8 @@
 (function attachTabVaultCore(globalObject) {
   'use strict';
 
-  const FORMAT = 'chrome-tab-vault';
-  // Keep the wire format and encryption identifiers compatible with Chrome Tab Vault.
-  const VERSION = '1.0.0';
+  const FORMAT = 'firefox-tab-vault';
+  const VERSION = '1.0.1';
   const VALID_COLORS = new Set([
     'grey', 'blue', 'red', 'yellow', 'green',
     'pink', 'purple', 'cyan', 'orange'
@@ -194,7 +193,7 @@
   function archiveToTxt(archiveInput) {
     const archive = normalizeArchive(archiveInput);
     const lines = [
-      '# Chrome Tab Vault TXT v1',
+      '# Firefox Tab Vault TXT v1',
       `# @archive ${JSON.stringify({
         exportedAt: archive.exportedAt,
         incognito: archive.source.incognito,

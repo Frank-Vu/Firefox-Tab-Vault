@@ -50,8 +50,9 @@ const { spawn, execFileSync } = require('node:child_process');
   cpSync('tests/fixtures', join(directory, 'fixtures'), { recursive: true });
   copyFileSync('tests/firefox-driver.js', join(directory, 'test-driver.js'));
   copyFileSync('tests/firefox-ui.js', join(directory, 'test-ui.js'));
+  copyFileSync('tests/firefox-import-ui.js', join(directory, 'test-import-ui.js'));
   writeFileSync(join(directory, 'popup.html'), readFileSync('popup.html', 'utf8')
-    .replace('</body>', '<script src="test-ui.js"></script></body>'));
+    .replace('</body>', '<script src="test-ui.js"></script><script src="test-import-ui.js"></script></body>'));
   writeFileSync(join(directory, 'test-config.js'), `globalThis.TEST_BASE = ${JSON.stringify(base)};\n` +
     `const originalDownload = browser.downloads.download.bind(browser.downloads);\n` +
     `browser.downloads.download = (options) => originalDownload({ ...options, saveAs: false });\n`);
@@ -86,5 +87,5 @@ const { spawn, execFileSync } = require('node:child_process');
     '--pref=browser.download.folderList=2', `--pref=browser.download.dir=${downloads}`], { stdio: 'inherit' });
   child.on('error', (error) => { console.error(error); finish(1); });
   child.on('exit', (code) => { if (!finished) finish(code || 1); });
-  timer = setTimeout(() => { console.error('Firefox integration test timed out.'); finish(1); }, 120000);
+  timer = setTimeout(() => { console.error('Firefox integration test timed out.'); finish(1); }, 180000);
 })().catch((error) => { console.error(error); process.exitCode = 1; });

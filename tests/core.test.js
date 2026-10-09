@@ -11,6 +11,8 @@ test('JSON and TXT round trips preserve all tab, group and window metadata', () 
       active: true, muted: true, discarded: false, autoDiscardable: false, groupKey: 'g1' },
       { url: 'https://example.org/sleep', pinned: true, discarded: true }]
   }] });
+  assert.equal(archive.format, 'firefox-tab-vault');
+  assert.ok(archiveToTxt(archive).startsWith('# Firefox Tab Vault TXT v1\n'));
   assert.deepEqual(normalizeArchive(JSON.parse(JSON.stringify(archive))), archive);
   assert.deepEqual(parseTxt(archiveToTxt(archive)), archive);
 });

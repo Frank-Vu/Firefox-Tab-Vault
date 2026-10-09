@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Firefox Tab Vault",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Export and restore Firefox tabs locally, including tab groups, order, pinned state, and window layout.",
   "permissions": [
     "tabs",

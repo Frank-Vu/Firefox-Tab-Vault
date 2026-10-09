@@ -15,10 +15,10 @@ const {
 const PASSWORD = 'correct horse battery staple 🔐';
 const SECRET_URL = 'https://private.example.test/account?token=secret';
 const JSON_CONTENT = `${JSON.stringify({
-  format: 'chrome-tab-vault',
+  format: 'firefox-tab-vault',
   windows: [{ tabs: [{ url: SECRET_URL }] }]
 }, null, 2)}\n`;
-const TXT_CONTENT = `# Chrome Tab Vault TXT v1\n${SECRET_URL}\n`;
+const TXT_CONTENT = `# Firefox Tab Vault TXT v1\n${SECRET_URL}\n`;
 
 const jsonEnvelopePromise = encryptBackupContent(JSON_CONTENT, PASSWORD, 'json');
 const txtEnvelopePromise = encryptBackupContent(TXT_CONTENT, PASSWORD, 'txt');
@@ -30,6 +30,8 @@ test('encrypted JSON serializes and decrypts without exposing backup content', a
   const decrypted = await decryptBackupContent(parsed, PASSWORD);
 
   assert.equal(parsed.format, ENCRYPTED_FORMAT);
+  assert.equal(ENCRYPTED_FORMAT, 'firefox-tab-vault-encrypted');
+  assert.equal(serialized.includes('chrome-tab-vault'), false);
   assert.equal(parsed.payloadFormat, 'json');
   assert.equal(serialized.includes(SECRET_URL), false);
   assert.deepEqual(decrypted, {
@@ -45,6 +47,7 @@ test('encrypted TXT has a recognizable header and decrypts without exposing back
   const decrypted = await decryptBackupContent(parsed, PASSWORD);
 
   assert.equal(serialized.startsWith(ENCRYPTED_TXT_HEADER), true);
+  assert.equal(ENCRYPTED_TXT_HEADER, '# Firefox Tab Vault Encrypted TXT v1');
   assert.equal(serialized.includes(SECRET_URL), false);
   assert.deepEqual(decrypted, {
     payloadFormat: 'txt',
@@ -79,6 +82,12 @@ test('AES-GCM authentication rejects modified ciphertext or metadata', async () 
     decryptBackupContent(modifiedMetadata, PASSWORD),
     /password is incorrect or the encrypted backup has been altered/i
   );
+
+  // Both names are recognized, but relabeling ciphertext must fail authentication.
+  await assert.rejects(
+    decryptBackupContent({ ...envelope, format: 'chrome-tab-vault-encrypted' }, PASSWORD),
+    /password is incorrect or the encrypted backup has been altered/i
+  );
 });
 
 test('plain backups are not mistaken for encrypted envelopes', () => {
@@ -95,4 +104,10 @@ test('malformed encrypted TXT and short export passwords are rejected', async ()
     encryptBackupContent(JSON_CONTENT, 'short', 'json'),
     /at least 8 characters/i
   );
+});
+
+test('malformed JSON envelopes using either supported identifier report encryption errors', () => {
+  for (const format of ['firefox-tab-vault-encrypted', 'chrome-tab-vault-encrypted']) {
+    assert.throws(() => parseEncryptedEnvelope(`{"format":"${format}",`), /invalid or incomplete/i);
+  }
 });

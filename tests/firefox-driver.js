@@ -74,12 +74,12 @@
       const result = await adapter.restore({ tabs: ['about:config', 'javascript:alert(1)', 'chrome://settings/', 'about:newtab', `${TEST_BASE}/permitted`] }, 'current', normal.id);
       assert(result.created === 2 && result.failed === 3, `Unexpected blocked URL result: ${JSON.stringify(result)}`);
     });
-    await run('Firefox Web Crypto decrypts upstream Chrome JSON and TXT fixtures', async () => {
+    await run('Firefox Web Crypto decrypts upstream JSON and TXT fixtures', async () => {
       for (const format of ['json', 'txt']) {
         const encrypted = await (await fetch(api.runtime.getURL(`fixtures/chrome-encrypted.${format}`))).text();
         const expected = await (await fetch(api.runtime.getURL(`fixtures/chrome.${format}`))).text();
         const result = await TabVaultCrypto.decryptBackupContent(TabVaultCrypto.parseEncryptedEnvelope(encrypted), 'tab-vault-fixture-password');
-        assert(result.plaintext === expected, `Chrome ${format} decryption failed`);
+        assert(result.plaintext === expected, `Upstream ${format} decryption failed`);
       }
     });
     const waitUI = async (windowId, mode) => {
@@ -97,7 +97,7 @@
       let timer;
       try {
         const result = await Promise.race([completed, new Promise((_, reject) => {
-          timer = setTimeout(() => reject(new Error('UI test timed out')), 30000);
+          timer = setTimeout(() => reject(new Error('UI test timed out')), 60000);
         })]);
         passed.push(...result.passed);
         failures.push(...result.failures);
