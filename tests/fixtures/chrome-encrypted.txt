@@ -1,0 +1,20 @@
+# Chrome Tab Vault Encrypted TXT v1
+# All tab URLs and metadata below are encrypted.
+{
+  "format": "chrome-tab-vault-encrypted",
+  "version": 1,
+  "payloadFormat": "txt",
+  "encryption": {
+    "name": "AES-GCM",
+    "keyLength": 256,
+    "tagLength": 128,
+    "iv": "Jb1cOYz/7fX39M3G"
+  },
+  "keyDerivation": {
+    "name": "PBKDF2",
+    "hash": "SHA-256",
+    "iterations": 600000,
+    "salt": "Np/VED0DczYY3QBYUUqesw=="
+  },
+  "ciphertext": "3CMB/Zcc6Dh7GCsvrIPlH++zwnswqtdQDUtxNRxJH+ZuYXehmilFBy7FT3n3hUpZ5Lwk9VPepV5mJWSP5wcdBW+nS0PKqxUIJj9erHGmYMlK7T7bov4gM3jhgIOpd5yHNiNLHOTrYZNeig4XklhARIeiadT9Ez7KPfyp9cuuLrxS90sNvo9JlR1zS3Ep/XCpzrQTU9zLvOr/PqdyqF8ANNpbmRkqkGalabxFBJXIEJVlAL9dzoTFrI5Owgi4z/Vc9lqZ+oeANN6C9lNzz6qsn6SVWNrcj6+teJT/OY8LwUfSQS2PmIb+YdsMoMdCVonMiteYhQP5ZFd2qR8lsZHjrg3tKPiOSAequvU0f+Mav7K50C8mXQeIz1/i9ogASb0BsgyzyFL3sWgJHgTV/z/pLyx3YWHGTE8znu8bjavfAVFJ6PVWDL6Mo6QVxDxmsXIIC7iULxWvsiMw94BtKCFnp/QayjbIRjYDp0egKZ3+rC1x5CaTurPMktRoK2t3Q4WvnQT6Cg4s/viOsDrnUPYj+MnRV6L+ggJz3E/ArX9DGeGQ2bY5rLFSNI1VC9W/htDT672iy2Sj+7ag57vKZyurq7A0h+RFZc8BiwiCEjgspSw9fOKLNy8CBfPnD9tli/GyUjolCXbqajxJljwrxtLxIwpwiEv/mWKnV3dDvUE2EKldgQFwrT7zHHsHyVkX607lmEc88JRapx0L4BL0cBEM4JfBlltMWngko06uTDu6u1u+StWqfIjx0XcCxiJaEeKxkRJHZLHYvWIOqy+k854XkBXxOzhLYK6cytH9YXNhzo04BeOsoVGb5O1pN4RmKdhJNbFCv7sXQcJvfYFWndUdZs6fBUdNTPqL+nqGRuM1f7tETn4O6UMDRIdflq1AMiahKY8ONJxS3OdBnb3UYPUWuWZiY+zVtr6Q8ixbmfWzZys0RhJ/Ai90Duny4XIdMgP81Zzbbj8FDQtI9dnRk8gpxJSGe58s3XGI/yXE9NYi60/RV6NfDAK71vujKm4GByVCWBbG6tWOBDMIpvgtOvNTRXGWurplIH4nQK/Uu/ipadJDWMYh6mpMTMu7Bs7UJOiNiqS8I55qrQ84Le794q2/VZmwBAUkA1wrnsDZOYjse6FVeIo0rSJNXGFqgrVt2QLSYzSF57tHtc4W+NNMBJ+6ZJ59N8I1AbXuiPwIBSW+4wtZkkxOT0OY4nqLtrImVnWfev5MdsVVTKlyfGpdOsriTFeP5zhe/OOyHQMIQFyhS6w2kiTmHsycqQjdbE+ZG3KcRnwRU2LdmW1yyIQIU8MTMtxknVI="
+}

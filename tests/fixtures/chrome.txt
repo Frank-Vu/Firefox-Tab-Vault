@@ -1,0 +1,21 @@
+# Chrome Tab Vault TXT v1
+# @archive {"exportedAt":"2026-10-09T00:00:00.000Z","incognito":true,"scope":"all-windows"}
+# Lines beginning with # are metadata. Other non-empty lines are tab URLs.
+
+# @window {"number":1,"state":"normal","focused":true}
+# @ungrouped
+# @tab {"title":"","pinned":true,"active":false,"muted":false,"discarded":false,"autoDiscardable":true}
+https://example.org/pinned
+# @group {"key":"g1","title":"Chrome research","color":"blue","collapsed":true}
+# @tab {"title":"","pinned":false,"active":true,"muted":true,"discarded":false,"autoDiscardable":true}
+https://example.org/active
+# @tab {"title":"","pinned":false,"active":false,"muted":false,"discarded":true,"autoDiscardable":true}
+https://example.org/sleep
+# @endwindow
+
+# @window {"number":2,"state":"maximized","focused":false}
+# @ungrouped
+# @tab {"title":"","pinned":false,"active":false,"muted":false,"discarded":false,"autoDiscardable":true}
+https://example.com/other
+# @endwindow
+
