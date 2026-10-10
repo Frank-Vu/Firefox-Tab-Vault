@@ -1,4 +1,4 @@
-# Tab Vault
+# Firefox Tab Vault
 
 A local-only Firefox desktop extension for tab backups. Requires **Firefox 142 or newer**.
 See [upstream attribution](UPSTREAM.md) for the original project.
