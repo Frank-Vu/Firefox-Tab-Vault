@@ -69,11 +69,11 @@ async function initialize() {
     if (isImportPage) {
       document.body.classList.add('import-page');
       document.getElementById('exportSection').hidden = true;
-      document.title = 'Import backup · Firefox Tab Vault';
-      elements.importTarget.value = pageOptions.get('target') === 'current' ? 'current' : 'new';
+      document.title = 'Import backup · Tab Vault';
+      document.getElementById('importDestination').hidden = false;
       elements.chooseFile.textContent = 'Choose backup and restore';
       document.getElementById('importHint').textContent =
-        'Choose a backup, enter its password if encrypted, then review and confirm. Keep this tab open until you confirm.';
+        'Choose a destination and backup, enter its password if encrypted, then review and confirm. Keep this tab open until you confirm.';
     }
     const previous = await callBackground({ type: 'result' });
     if (previous.pending) showStatus('A restore is still running in the background.');
@@ -117,8 +117,9 @@ async function openImportPage() {
   clearStatus();
   setBusy(true);
   try {
-    // The background owns this handoff because opening a tab closes the action popup.
-    await callBackground({ type: 'open-import', target: elements.importTarget.value });
+    // The background owns the handoff so it can finish if Firefox dismisses the popup.
+    await callBackground({ type: 'open-import' });
+    window.close();
   } catch (error) {
     showStatus(`Could not open import: ${error.message}`, 'error');
   } finally {

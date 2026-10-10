@@ -2,7 +2,7 @@
   'use strict';
 
   const FORMAT = 'firefox-tab-vault';
-  const VERSION = '1.0.1';
+  const VERSION = '1.0.3';
   const VALID_COLORS = new Set([
     'grey', 'blue', 'red', 'yellow', 'green',
     'pink', 'purple', 'cyan', 'orange'

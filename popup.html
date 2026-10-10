@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Firefox Tab Vault</title>
+  <title>Tab Vault</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon32.png">
   <link rel="stylesheet" href="popup.css">
 </head>
 
@@ -12,7 +13,7 @@
   <main>
     <header class="header">
       <div>
-        <h1>Firefox Tab Vault</h1>
+        <h1>Tab Vault</h1>
         <p>Local tab backup for Firefox</p>
       </div>
       <span id="contextBadge" class="badge">Checking…</span>
@@ -42,14 +43,16 @@
 
     <section class="card">
       <h2>Import</h2>
-      <label class="field-label" for="importTarget">Restore destination</label>
-      <select id="importTarget">
-        <option value="new">New window(s)</option>
-        <option value="current">Append to current window</option>
-      </select>
+      <div id="importDestination" hidden>
+        <label class="field-label" for="importTarget">Restore destination</label>
+        <select id="importTarget">
+          <option value="new">New window(s)</option>
+          <option value="current">Append to current window</option>
+        </select>
+      </div>
       <input id="fileInput" type="file" accept=".json,.txt,application/json,text/plain" hidden>
       <button id="chooseFile" class="primary full" type="button">Import backup…</button>
-      <p id="importHint" class="hint">Opens an import tab for file selection and review. Nothing is uploaded.</p>
+      <p id="importHint" class="hint">Opens an import tab to choose a destination, select a file, and review. Nothing is uploaded.</p>
     </section>
 
     <div id="status" class="status" role="status" aria-live="polite"></div>

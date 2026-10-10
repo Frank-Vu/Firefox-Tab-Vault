@@ -1,4 +1,4 @@
-# Firefox Tab Vault
+# Tab Vault
 
 A local-only Firefox desktop extension for tab backups. Requires **Firefox 142 or newer**.
 See [upstream attribution](UPSTREAM.md) for the original project.
@@ -22,19 +22,25 @@ See [upstream attribution](UPSTREAM.md) for the original project.
 
 ## Install for local use
 
-1. Extract `dist/firefox-tab-vault-1.0.1.zip`, or use this source directory.
+1. Extract `dist/tab-vault-1.0.3.zip`, or use this source directory.
 2. In Firefox, open `about:debugging#/runtime/this-firefox`.
 3. Click **Load Temporary Add-on…** and select `manifest.json` in the extracted directory.
-4. Use the Firefox Tab Vault toolbar button. Pin it through Firefox's extensions menu if desired.
+4. Use the Tab Vault toolbar button. Pin it through Firefox's extensions menu if desired.
 
 Temporary add-ons are removed when Firefox restarts. The generated `.xpi` is **unsigned**;
 regular Firefox requires Mozilla signing for permanent installation. Submit the ZIP to
 [Mozilla Add-ons](https://addons.mozilla.org/developers/) for signing, either for public listing
 or self-distribution. No signing credentials are included or required for local testing.
 
+For permanent installation in regular Firefox, choose **On your own** when submitting to
+Mozilla Add-ons, upload the generated ZIP, and download the signed XPI after validation.
+Then open `about:addons`, click the gear menu, choose **Install Add-on From File…**, and
+select the signed XPI. The add-on name is **Tab Vault** because Mozilla's upload validator
+rejects add-on names containing Mozilla or Firefox trademarks.
+
 ## Enable private windows
 
-Open `about:addons`, select Firefox Tab Vault, and set **Run in Private Windows** to **Allow**.
+Open `about:addons`, select Tab Vault, and set **Run in Private Windows** to **Allow**.
 Open the extension from the private window to export or restore privately.
 
 Firefox uses a shared extension context for normal and private browsing. This extension
@@ -49,8 +55,9 @@ Choose **Current window** or **All windows in this mode**, optionally change the
 checkbox, then choose **Export JSON** or **Export TXT**. Review the tabs, select what to include,
 and confirm. Encrypted exports require a password of at least eight characters and confirmation.
 
-To restore, select **New window(s)** or **Append to current window**, then click **Import backup…**.
-An import tab opens in that window and browsing mode. Click **Choose backup and restore** there,
+To restore, click **Import backup…**. The popup closes after opening an import tab in that
+window and browsing mode. In the import tab, select **New window(s)** or **Append to current
+window**, then click **Choose backup and restore**,
 enter its password if encrypted, review the full list, and confirm. Keep the import tab open
 until you confirm. Cancelling the review opens no restored tabs.
 File selection runs in this tab because Firefox can close toolbar popups when a native file
@@ -63,7 +70,7 @@ Passwords are never saved. Lost passwords cannot be recovered.
 
 New backups use the `firefox-tab-vault` and `firefox-tab-vault-encrypted` identifiers,
 with Firefox Tab Vault TXT headers. Legacy identifiers and headers are accepted on import,
-including in previously encrypted backups. New exports require Firefox Tab Vault 1.0.1 or
+including in previously encrypted backups. New exports require Tab Vault 1.0.1 or
 another reader that supports the Firefox identifiers.
 
 ## Firefox compatibility and limits

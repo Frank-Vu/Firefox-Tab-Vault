@@ -1,6 +1,6 @@
 {
   "name": "firefox-tab-vault",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": true,
   "description": "Local Firefox tab backups with optional password encryption",
   "scripts": {

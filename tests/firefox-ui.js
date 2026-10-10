@@ -28,6 +28,7 @@
   await run('correct context and encryption default', async () => {
     assert(elements.encryptExport.checked === (mode === 'private'), 'Wrong encryption default');
     assert(elements.contextBadge.textContent.startsWith(mode === 'private' ? 'Private' : 'Normal'), 'Wrong mode badge');
+    assert(document.getElementById('importDestination').hidden, 'Popup shows a restore destination');
   });
   await run('export review, per-tab selection, select all and cancellation', async () => {
     elements.exportScope.value = 'all';
@@ -113,11 +114,13 @@
   });
   for (const target of ['current', 'new']) {
     await run(`${target}: popup hands import to a persistent tab`, async () => {
-      elements.importTarget.value = target;
       const before = new Set((await browser.tabs.query({ windowId: sourceWindowId })).map((tab) => tab.id));
       let pickerOpened = false;
+      let popupClosed = false;
       const originalClick = elements.fileInput.click;
+      const originalClose = window.close;
       elements.fileInput.click = () => { pickerOpened = true; };
+      window.close = () => { popupClosed = true; };
       let importTab;
       try {
         elements.chooseFile.click();
@@ -128,7 +131,8 @@
         });
         assert(!pickerOpened, 'File picker opened in the toolbar popup');
         assert(importTab.incognito === (mode === 'private'), 'Import tab changed browsing mode');
-        assert(new URL(importTab.url).searchParams.get('target') === target, 'Destination was lost');
+        assert(!new URL(importTab.url).searchParams.has('target'), 'Popup chose the restore destination');
+        await wait(() => popupClosed);
         let done;
         const completed = new Promise((resolve) => { done = resolve; });
         const listener = (message) => {
@@ -139,7 +143,9 @@
         };
         browser.runtime.onMessage.addListener(listener);
         try {
-          await browser.tabs.update(importTab.id, { url: `${importTab.url}&test-import=${mode}` });
+          await browser.tabs.update(importTab.id, {
+            url: `${importTab.url}&test-import=${mode}&test-import-target=${target}`
+          });
           let report;
           void completed.then((value) => { report = value; });
           await wait(() => report, 1000);
@@ -150,6 +156,7 @@
         }
       } finally {
         elements.fileInput.click = originalClick;
+        window.close = originalClose;
         if (importTab) await browser.tabs.remove(importTab.id);
       }
     });

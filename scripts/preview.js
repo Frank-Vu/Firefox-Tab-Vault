@@ -6,7 +6,7 @@ const archive = JSON.parse(readFileSync('tests/fixtures/chrome.json', 'utf8'));
 archive.source.incognito = false;
 archive.source.browser = 'Firefox';
 archive.windows[0].groups.g1.title = 'Firefox research';
-const files = new Set(['popup.html', 'popup.css', 'popup.js', 'core.js', 'crypto.js']);
+const files = new Set(['popup.html', 'popup.css', 'popup.js', 'core.js', 'crypto.js', 'icons/icon32.png']);
 const server = createServer((request, response) => {
   const name = new URL(request.url, 'http://localhost').pathname.slice(1) || 'popup.html';
   if (name === 'preview-api.js') {
@@ -15,7 +15,7 @@ const server = createServer((request, response) => {
       windows: { getCurrent: async () => ({id: 1, incognito: false}) },
       runtime: { sendMessage: async (message) => {
         if (message.type === 'open-import') {
-          window.open('popup.html?view=import&target=' + message.target, '_blank');
+          window.open('popup.html?view=import', '_blank');
           return {value: {tabId: 1}};
         }
         return {value:
@@ -26,9 +26,9 @@ const server = createServer((request, response) => {
       } }
     };`);
   } else if (files.has(name)) {
-    let content = readFileSync(name, 'utf8');
+    let content = readFileSync(name, name.endsWith('.png') ? undefined : 'utf8');
     if (name === 'popup.html') content = content.replace('<script src="core.js">', '<script src="preview-api.js"></script><script src="core.js">');
-    response.setHeader('Content-Type', name.endsWith('.html') ? 'text/html' : name.endsWith('.css') ? 'text/css' : 'text/javascript');
+    response.setHeader('Content-Type', name.endsWith('.png') ? 'image/png' : name.endsWith('.html') ? 'text/html' : name.endsWith('.css') ? 'text/css' : 'text/javascript');
     response.end(content);
   } else { response.writeHead(404); response.end(); }
 });

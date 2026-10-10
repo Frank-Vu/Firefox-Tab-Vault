@@ -3,7 +3,7 @@
 (async () => {
   const mode = new URLSearchParams(location.search).get('test-import');
   if (!mode) return;
-  const target = new URLSearchParams(location.search).get('target');
+  const target = new URLSearchParams(location.search).get('test-import-target');
   const passed = [];
   const failures = [];
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
@@ -21,7 +21,10 @@
   await wait(() => !elements.chooseFile.disabled);
   await run('persistent file picker and destination', async () => {
     assert(isImportPage && document.getElementById('exportSection').hidden, 'Import view missing');
-    assert(elements.importTarget.value === target, 'Destination changed');
+    assert(!document.getElementById('importDestination').hidden, 'Import tab hides the restore destination');
+    assert(elements.importTarget.value === 'new', 'New-window default changed');
+    elements.importTarget.value = target;
+    elements.importTarget.dispatchEvent(new Event('change'));
     assert(contextIsIncognito === (mode === 'private'), 'Browsing mode changed');
     let clicked = false;
     const originalClick = elements.fileInput.click;
@@ -107,5 +110,5 @@
 })().catch(async (error) => {
   const options = new URLSearchParams(location.search);
   await browser.runtime.sendMessage({ channel: 'test-import', mode: options.get('test-import'),
-    target: options.get('target'), passed: [], failures: [{ name: 'Import tab setup', error: error.message }] });
+    target: options.get('test-import-target'), passed: [], failures: [{ name: 'Import tab setup', error: error.message }] });
 });

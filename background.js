@@ -15,10 +15,9 @@ browser.runtime.onMessage.addListener((message, sender) => {
       let value;
       if (message.type === 'collect') value = await vault.collect(message.scope, windowId);
       else if (message.type === 'open-import') {
-        if (!['current', 'new'].includes(message.target)) throw new Error('Unknown restore destination.');
         const page = await browser.tabs.create({
           windowId, active: true,
-          url: browser.runtime.getURL(`popup.html?view=import&target=${message.target}`)
+          url: browser.runtime.getURL('popup.html?view=import')
         });
         value = { tabId: page.id };
       } else if (message.type === 'download') {

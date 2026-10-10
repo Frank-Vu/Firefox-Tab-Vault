@@ -13,9 +13,9 @@ try {
   cpSync('icons', join(staging, 'icons'), { recursive: true });
   execFileSync(process.execPath, [join(dirname(require.resolve('web-ext')), 'bin/web-ext.js'), 'build',
     '--source-dir', staging, '--artifacts-dir', resolve('dist'),
-    '--filename', `firefox-tab-vault-${version}.zip`, '--overwrite-dest'], { stdio: 'inherit' });
+    '--filename', `tab-vault-${version}.zip`, '--overwrite-dest'], { stdio: 'inherit' });
 } finally {
   if (!resolve(staging).startsWith(resolve(prefix))) throw new Error('Unexpected build staging path.');
   rmSync(staging, { recursive: true, force: true });
 }
-copyFileSync(join('dist', `firefox-tab-vault-${version}.zip`), join('dist', `firefox-tab-vault-${version}.xpi`));
+copyFileSync(join('dist', `tab-vault-${version}.zip`), join('dist', `tab-vault-${version}.xpi`));
